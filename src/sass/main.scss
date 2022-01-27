@@ -4,4 +4,61 @@
  */
 
 // Стили для файла с примером HTML-фрагмента
-@import './example';
+.search-form {
+  background-color: rgb(13, 180, 247);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+button {
+  margin-left: 10px;
+}
+
+.gallery {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.photo-card {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  border: 4px solid black;
+  border-radius: 15px;
+  background-color: rgba(196, 189, 189, 0.692);
+}
+.info {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+}
+.info-item {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+}
+.load-more {
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
