@@ -1,5 +1,6 @@
 import './sass/main.scss';
 import SimpleLightbox from "simplelightbox"
+import 'simplelightbox/dist/simple-lightbox.min.css'
 import Notiflix from 'notiflix';
 import throttle from "lodash.throttle";
 Notiflix.Notify.init({
@@ -9,7 +10,6 @@ Notiflix.Notify.init({
   opacity: 1,
   // ...
 });
-import 'simplelightbox/dist/simple-lightbox.min.css'
 
 
 const axios = require('axios');
@@ -34,12 +34,7 @@ async function api(checkSubmit) {
   })
     .then(async data => {
       currentSeach = form[0].value
-      
       await markup(data.data.hits)
-      
-      
-      
-      
       
       if (currentPage !== 1 && checkSubmit !== true) {
     scroll()
@@ -57,10 +52,6 @@ async function api(checkSubmit) {
       Notiflix.Notify.success(`No more picture`)
           })
   
-  
-  
-  
-    ;
 }
 
 form.addEventListener("submit", getSeach)
@@ -70,6 +61,7 @@ window.addEventListener('scroll', throttle(infiniteLoad, 300))
 
 function getSeach(event) {
   event.preventDefault()
+  
   
   
   // loadMoreBTN.classList.remove("visually-hidden")
@@ -118,7 +110,8 @@ function markup(data) {
   
   
     gallery.insertAdjacentHTML('beforeend', markupData.join(""))
-    const lightbox = new SimpleLightbox('.gallery .photo-card a')
+  const lightbox = new SimpleLightbox('.gallery .photo-card a')
+  lightbox.refresh()
   
 
  
