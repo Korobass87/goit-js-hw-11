@@ -15,10 +15,27 @@ Notiflix.Notify.init({
 const axios = require('axios');
 const form = document.querySelector(".search-form")
 const gallery = document.querySelector(".gallery")
-const loadMoreBTN = document.querySelector(".load-more")
-// loadMoreBTN.classList.add("visually-hidden")
+const intersection = document.querySelector(".intersection")
 let currentPage = 1
 let currentSeach = ""
+let length = 1
+const options = {    
+  rootMargin: '20px' 
+}
+const onEntry = entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      if (gallery.innerHTML === "") {
+        return
+      }
+      currentPage += 1
+      api(false);
+    }
+  });
+};
+const observer = new IntersectionObserver(onEntry, options)
+ 
+
 
 async function api(checkSubmit) {
   await axios.get('https://pixabay.com/api/', {
@@ -34,10 +51,16 @@ async function api(checkSubmit) {
   })
     .then(async data => {
       currentSeach = form[0].value
-      await markup(data.data.hits)
-      
-      if (currentPage !== 1 && checkSubmit !== true) {
-    scroll()
+     length = data.data.hits.length
+        await markup(data.data.hits, checkSubmit)
+      if (data.data.hits.length === 0 && data.data.totalHits !== 0) {
+        Notiflix.Notify.init({
+    position: 'center-bottom',
+ });
+        Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.")
+        Notiflix.Notify.init({
+    position: 'right-center',
+ });
       }
       if (data.data.totalHits === 0) {
         Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
@@ -48,23 +71,26 @@ async function api(checkSubmit) {
         }
       }
     })
+    
     .catch(error => {
-      Notiflix.Notify.success(`No more picture`)
+     Notiflix.Notify.init({
+  position: 'center-bottom',
+ });
+        Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.")
+        Notiflix.Notify.init({
+    position: 'right-center',
+ });
           })
-  
-}
+  }
 
 form.addEventListener("submit", getSeach)
-window.addEventListener('scroll', throttle(infiniteLoad, 300))
 
-// loadMoreBTN.addEventListener("click", loadMore)
 
-function getSeach(event) {
+async function getSeach(event) {
   event.preventDefault()
+  observer.observe(intersection)
   
-  
-  
-  // loadMoreBTN.classList.remove("visually-hidden")
+ 
   let checkSubmit = event.type === "submit"
   if (checkSubmit) { gallery.innerHTML = "" }
   
@@ -73,13 +99,11 @@ function getSeach(event) {
     currentPage +=  1
   } else {currentPage = 1}
   
-  api(checkSubmit)
-  
-
+    await api(checkSubmit)
   
 }
  
-function markup(data) {
+async function markup(data, checkSubmit) {
   const markupData = data.map(el => {
     return `
       <div class="photo-card">
@@ -106,32 +130,18 @@ function markup(data) {
         </div>
       </div>
           `
-  })
+    })
   
   
-    gallery.insertAdjacentHTML('beforeend', markupData.join(""))
-  const lightbox = new SimpleLightbox('.gallery .photo-card a')
-  lightbox.refresh()
-  
-
- 
-
-  
-}
-
-// function loadMore() {
-//   window.addEventListener('scroll', xcx)
-//   getSeach(event)
-
-// }
-function infiniteLoad(e) {   
-  const scrolled = window.scrollY
-   if ((scrolled + window.innerHeight) >= document.body.offsetHeight - 5) {
-     currentPage += 1
-     
-     api()
-    }
-}
+    await gallery.insertAdjacentHTML('beforeend', markupData.join(""))
+    
+    const lightbox = new SimpleLightbox('.gallery .photo-card a')
+    lightbox.refresh()
+    
+    if (currentPage !== 1 && checkSubmit !== true) {
+      scroll()
+    } 
+  }
  
 function scroll() {
 
@@ -140,6 +150,7 @@ function scroll() {
     top: cardHeight * 2 + 30,
     behavior: 'smooth',
     })  
+    
 }
 
 
