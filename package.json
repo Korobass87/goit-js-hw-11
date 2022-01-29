@@ -28,6 +28,9 @@
   "dependencies": {
     "axios": "^0.25.0",
     "infinite-scroll": "^4.0.1",
-    "simplelightbox": "^2.10.2"
+    "lodash.throttle": "^4.1.1",
+    "notiflix": "^3.2.3",
+    "simplelightbox": "^2.10.2",
+    "throttle": "^1.0.3"
   }
 }
