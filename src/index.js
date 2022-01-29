@@ -20,8 +20,8 @@ const loadMoreBTN = document.querySelector(".load-more")
 let currentPage = 1
 let currentSeach = ""
 
-function api() {
-  axios.get('https://pixabay.com/api/', {
+async function api(checkSubmit) {
+  await axios.get('https://pixabay.com/api/', {
     params: {
         key: '25440089-75c058e87851521159a5db732',
         q: `${form[0].value}`,
@@ -34,9 +34,14 @@ function api() {
   })
     .then(async data => {
       currentSeach = form[0].value
+      
       await markup(data.data.hits)
       
-      if (currentPage !== 1) {
+      
+      
+      
+      
+      if (currentPage !== 1 && checkSubmit !== true) {
     scroll()
       }
       if (data.data.totalHits === 0) {
@@ -48,11 +53,19 @@ function api() {
         }
       }
     })
-  ;
+    .catch(error => {
+      Notiflix.Notify.success(`No more picture`)
+          })
+  
+  
+  
+  
+    ;
 }
 
 form.addEventListener("submit", getSeach)
 window.addEventListener('scroll', throttle(infiniteLoad, 300))
+
 // loadMoreBTN.addEventListener("click", loadMore)
 
 function getSeach(event) {
@@ -60,14 +73,17 @@ function getSeach(event) {
   
   
   // loadMoreBTN.classList.remove("visually-hidden")
-  if (event.type === "submit") { gallery.innerHTML = "" }
+  let checkSubmit = event.type === "submit"
+  if (checkSubmit) { gallery.innerHTML = "" }
   
   
-        if (currentSeach === form[0].value) {
-          currentPage +=  1
-        } else {currentPage = 1}
+  if (currentSeach === form[0].value) {
+    currentPage +=  1
+  } else {currentPage = 1}
   
-  api()
+  api(checkSubmit)
+  
+
   
 }
  
@@ -100,8 +116,9 @@ function markup(data) {
           `
   })
   
-  gallery.insertAdjacentHTML('beforeend', markupData.join(""))
-  const lightbox = new SimpleLightbox('.gallery .photo-card a')
+  
+    gallery.insertAdjacentHTML('beforeend', markupData.join(""))
+    const lightbox = new SimpleLightbox('.gallery .photo-card a')
   
 
  
@@ -118,7 +135,7 @@ function infiniteLoad(e) {
   const scrolled = window.scrollY
    if ((scrolled + window.innerHeight) >= document.body.offsetHeight - 5) {
      currentPage += 1
-     console.log(document.querySelector('.gallery').firstElementChild.getBoundingClientRect())
+     
      api()
     }
 }
